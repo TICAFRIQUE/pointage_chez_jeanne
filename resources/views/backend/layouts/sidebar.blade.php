@@ -80,6 +80,12 @@
                             <i class="ri-dashboard-2-line"></i> <span>TABLEAU DE BORD</span>
                         </a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link menu-link {{ Route::is('pointage.*') ? 'active' : '' }}" href="{{ route('pointages.listEquipe') }}">
+                            <i class="ri-user-fill"></i>
+                            <span>Pointage</span>
+                        </a>
+                    </li>
 
                     <li class="nav-item">
                         <a class="nav-link menu-link {{ Route::is('employes.*') ? 'active' : '' }}"
@@ -88,6 +94,7 @@
                             <span>Employés</span>
                         </a>
                     </li>
+
 
                     <li class="nav-item">
                         <a class="nav-link menu-link {{ Route::is('equipes.*') ? 'active' : '' }}"

@@ -17,6 +17,10 @@ class Employe extends Model
     {
         return $this->belongsTo(Equipe::class);
     }
+    public function presences()
+    {
+        return $this->hasMany(Presence::class);
+    }
 
 
 

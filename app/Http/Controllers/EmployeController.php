@@ -85,6 +85,7 @@ class EmployeController extends Controller
      */
     public function delete($id)
     {
+        
         $employe = Employe::findOrFail($id);
         $employe->delete();
 

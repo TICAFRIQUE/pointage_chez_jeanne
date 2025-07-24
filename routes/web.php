@@ -9,6 +9,7 @@ use App\Http\Controllers\backend\ParametreController;
 use App\Http\Controllers\backend\PermissionController;
 use App\Http\Controllers\EmployeController;
 use App\Http\Controllers\EquipeController;
+use App\Http\Controllers\Pointage;
 use App\Http\Controllers\PosteController;
 
 
@@ -97,5 +98,11 @@ Route::middleware(['admin'])->prefix('admin')->group(function () {
         Route::get('edit/{id}', 'edit')->name('edit');
         Route::post('update/{id}', 'update')->name('update');
         Route::delete('delete/{id}', 'delete')->name('delete');
+    });
+
+    Route::prefix('pointage')->name('pointages.')->controller(Pointage::class)->group(function(){
+        Route::get('listEquipe','listEquipe')->name('listEquipe');
+        Route::get('equipeActive/{id}','equipeActive')->name('equipeActive');
+        Route::post('storePresence','store')->name('store');
     });
 });

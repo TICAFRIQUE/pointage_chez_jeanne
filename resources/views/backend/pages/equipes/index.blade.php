@@ -62,9 +62,10 @@
                                             <div class="btn-group">
                                                 {{-- Bouton Modifier --}}
                                                 <a href="{{ route('equipes.edit', $equipe->id) }}"
-                                                    class="btn btn-outline-primary btn-sm" title="Modifier">
+                                                    class="btn btn-outline-primary btn-sm me-2" title="Modifier">
                                                     <i class="ri-edit-line"></i>
                                                 </a>
+
                                                 {{-- Bouton Supprimer --}}
                                                 <form action="{{ route('equipes.delete', $equipe->id) }}" method="POST"
                                                     style="display:inline;"
@@ -76,8 +77,8 @@
                                                         <i class="ri-delete-bin-line"></i>
                                                     </button>
                                                 </form>
-
                                             </div>
+
                                         </td>
                                     </tr>
                                 @empty

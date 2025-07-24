@@ -60,7 +60,7 @@
                                         <td>
                                             <div class="btn-group">
 
-                                                <form action="{{ route('equipes.delete', $employe->id) }}" method="POST"
+                                                <form action="{{ route('employes.delete', $employe->id) }}" method="POST"
                                                     style="display:inline;"
                                                     onsubmit="return confirm('Voulez-vous vraiment supprimer cet employé ?');">
                                                     @csrf
