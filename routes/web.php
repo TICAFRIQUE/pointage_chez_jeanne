@@ -104,5 +104,7 @@ Route::middleware(['admin'])->prefix('admin')->group(function () {
         Route::get('listEquipe','listEquipe')->name('listEquipe');
         Route::get('equipeActive/{id}','equipeActive')->name('equipeActive');
         Route::post('storePresence','store')->name('store');
+        Route::get('historique','historique')->name('historique');
+
     });
 });

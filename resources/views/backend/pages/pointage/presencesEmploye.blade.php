@@ -24,10 +24,12 @@
     <div class="row">
         <div class="col-lg-12">
             <div class="card shadow rounded-4">
-                <div class="card-header d-flex justify-content-between align-items-center bg-secondary text-white">
+                <div
+                    class="card-header d-flex justify-content-between align-items-center bg-secondary text-white rounded-top">
                     <h5 class="card-title mb-0">👥 Pointage des employés</h5>
                     <a href="{{ route('pointages.listEquipe') }}" class="btn btn-light text-primary fw-semibold">
-                        <i class="bi bi-arrow-left me-1"></i> Retour</a>
+                        <i class="bi bi-arrow-left me-1"></i> Retour
+                    </a>
                 </div>
 
                 @if (session('success_message'))
@@ -37,47 +39,62 @@
                     </div>
                 @endif
 
-                <div class="card-body">
+                <div class="card-body px-4 py-4">
                     <form action="{{ route('pointages.store') }}" method="POST">
                         @csrf
+
+                        <!-- Sélection de la date -->
+                        <div class="row mb-4 justify-content-center">
+                            <div class="col-md-6 col-lg-4">
+                                <label for="date" class="form-label fw-semibold">📅 Date du pointage</label>
+                                <input type="date" name="date" id="date"
+                                    class="form-control shadow-sm @error('date') is-invalid @enderror"
+                                    value="{{ old('date', date('Y-m-d')) }}">
+                            </div>
+                        </div>
+
+                        <!-- Table de pointage -->
                         <div class="table-responsive">
                             <table id="buttons-datatables"
-                                class="table table-bordered table-hover align-middle text-center">
+                                class="table table-bordered table-hover text-center align-middle">
                                 <thead class="table-light">
                                     <tr>
                                         <th>#</th>
                                         <th>Nom & Prénoms</th>
                                         <th>Heure d’arrivée</th>
                                         <th>Heure de départ</th>
-
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <div class="row mb-3">
-                                        <div class="col-md-4">
-                                            <label for="date" class="form-label">Date</label>
-                                            <input type="date" name="date" id="date"
-                                                class="form-control @error('date') is-invalid @enderror">
-
-                                        </div>
-                                    </div>
-                                    @foreach ($equipeActive as $key => $item)
+                                    @forelse ($equipeActive as $key => $item)
                                         <tr>
-                                            <td>{{ ++$key }}</td>
-                                            <td>{{ $item['nom'] . ' ' . $item['prenoms'] }}</td>
-                                            <td><input type="time" name="heure_arrivee[{{ $item->id }}]"
-                                                    class="form-control"></td>
-                                            <td><input type="time" name="heure_depart[{{ $item->id }}]"
-                                                    class="form-control"></td>
-                                            {{-- <td><input type="checkbox" name="employes[]" value="{{ $item->id }}"></td> --}}
+                                            <td>{{ $key + 1 }}</td>
+                                            <td class="text-capitalize">{{ $item->nom . ' ' . $item->prenoms }}</td>
+                                            <td>
+                                                <input type="time" name="heure_arrivee[{{ $item->id }}]"
+                                                    class="form-control shadow-sm" required>
+                                            </td>
+                                            <td>
+                                                <input type="time" name="heure_depart[{{ $item->id }}]"
+                                                    class="form-control shadow-sm" required>
+                                            </td>
                                         </tr>
-                                    @endforeach
+                                    @empty
+                                        <tr>
+                                            <td colspan="4">
+                                                <p class="text-muted fst-italic mb-0">Aucun employé dans cette équipe.</p>
+                                            </td>
+                                        </tr>
+                                    @endforelse
                                 </tbody>
                             </table>
                         </div>
 
+                        <!-- Bouton de soumission -->
                         <div class="text-center mt-4">
-                            <button type="submit" class="btn btn-primary px-4 py-2">Valider le pointage</button>
+                            <button type="submit" class="btn btn-success px-5 py-2 rounded-pill shadow">
+                                <i class="ri-check-double-line me-2"></i>Valider le pointage
+                            </button>
                         </div>
                     </form>
                 </div>

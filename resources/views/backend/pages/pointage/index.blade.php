@@ -35,17 +35,24 @@
                     </div>
                 @endif
 
-                <div class="card-body bg-light rounded-bottom">
-                    <div class="d-flex justify-content-center gap-4 flex-wrap my-4">
-                        @foreach ($equipe as $item)
+                <div class="card-body bg-light rounded-bottom py-4">
+                    <h5 class="text-center mb-4 fw-semibold text-uppercase text-primary">
+                        <i class="bi bi-list-ul me-2"></i>Sélectionnez une équipe
+                    </h5>
+
+                    <div class="d-flex justify-content-center flex-wrap gap-3 px-2">
+                        @forelse($equipe as $item)
                             <a href="{{ route('pointages.equipeActive', ['id' => $item->id]) }}"
-                                class="btn btn-outline-primary btn-lg px-5 py-3 fw-bold rounded-pill shadow-sm">
-                                {{ $item->nom }}
+                                class="btn btn-outline-primary px-4 py-2 fw-semibold rounded-pill shadow-sm d-flex align-items-center gap-2">
+                                <i class="bi bi-person-bounding-box"></i> {{ $item->nom }}
                             </a>
-                        @endforeach
+                        @empty
+                            <div class="text-center w-100">
+                                <p class="text-muted fst-italic">Aucune équipe disponible. Veuillez en créer une.</p>
+                            </div>
+                        @endforelse
                     </div>
                 </div>
-
             </div>
         </div>
     </div>

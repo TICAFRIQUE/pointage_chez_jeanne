@@ -54,4 +54,13 @@ class Pointage extends Controller
 
         return redirect()->route('pointages.listEquipe')->with('success_message', 'Pointage enregistré avec succès.');
     }
+
+
+
+    public function historique()
+    {
+        $pointages = Presence::with('employe')->orderByDesc('date')->paginate(30);
+
+        return view('backend.pages.pointage.historique', compact('pointages'));
+    }
 }
