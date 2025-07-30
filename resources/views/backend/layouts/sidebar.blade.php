@@ -1,12 +1,7 @@
 <div class="app-menu navbar-menu">
     <!-- LOGO + toggle bouton -->
     <div class="navbar-brand-box">
-        {{-- Exemple logo, décommente et modifie si tu veux --}}
-        {{--
-        <a href="{{ route('dashboard.index') }}" class="logo">
-            <img src="{{ asset('images/logo.png') }}" alt="Logo" height="30">
-        </a>
-        --}}
+
         <button type="button" class="btn btn-sm p-0 fs-20 header-item btn-vertical-sm-hover" id="vertical-hover"
             aria-label="Toggle sidebar">
             <i class="ri-menu-line"></i>

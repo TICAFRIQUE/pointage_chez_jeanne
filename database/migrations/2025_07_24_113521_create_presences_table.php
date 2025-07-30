@@ -13,11 +13,11 @@ return new class extends Migration
     {
         Schema::create('presences', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('employe_id')->constrained('employes')->cascadeOnDelete();
+            $table->foreignId('employe_id')->constrained('employes')->onDelete('cascade');
+            $table->foreignId('equipe_id')->nullable()->constrained('equipes')->onDelete('set null');
+            $table->date('date');
             $table->time('heure_arrivee')->nullable();
             $table->time('heure_depart')->nullable();
-            $table->date('date')->nullable();
-            $table->unique(['employe_id', 'date']);
             $table->timestamps();
         });
     }

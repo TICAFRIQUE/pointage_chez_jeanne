@@ -8,14 +8,19 @@ class Presence extends Model
 {
     protected $fillable = [
         'employe_id',
+        'equipe_id',      
         'heure_arrivee',
         'heure_depart',
-        'date'
+        'date',
     ];
 
     public function employe()
     {
-
         return $this->belongsTo(Employe::class);
+    }
+
+    public function equipe()
+    {
+        return $this->belongsTo(Equipe::class);
     }
 }

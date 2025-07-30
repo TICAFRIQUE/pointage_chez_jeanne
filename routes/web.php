@@ -100,11 +100,12 @@ Route::middleware(['admin'])->prefix('admin')->group(function () {
         Route::delete('delete/{id}', 'delete')->name('delete');
     });
 
-    Route::prefix('pointage')->name('pointages.')->controller(Pointage::class)->group(function(){
-        Route::get('listEquipe','listEquipe')->name('listEquipe');
-        Route::get('equipeActive/{id}','equipeActive')->name('equipeActive');
-        Route::post('storePresence','store')->name('store');
-        Route::get('historique','historique')->name('historique');
-
+    Route::prefix('pointage')->name('pointages.')->controller(Pointage::class)->group(function () {
+        Route::get('listEquipe', 'listEquipe')->name('listEquipe');
+        Route::get('pointageDuJour', 'pointageDuJour')->name('pointageDuJour');
+        Route::post('storePresence', 'store')->name('store');
+        Route::get('historique', 'historique')->name('historique');
+        Route::get('employe/{employe}', 'historiqueParEmploye')->name('historique.employe');
+        Route::get('export-pdf', 'exportPdf')->name('exportPdf');
     });
 });

@@ -19,4 +19,11 @@ class Equipe extends Model
     {
         return $this->hasMany(Employe::class);
     }
+
+    // public function employes()
+    // {
+    //     return $this->belongsToMany(Employe::class, 'equipe_employe')
+    //         ->withPivot('date_affectation', 'date_fin')
+    //         ->withTimestamps();
+    // }
 }
