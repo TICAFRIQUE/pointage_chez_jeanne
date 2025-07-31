@@ -8,11 +8,14 @@ class Presence extends Model
 {
     protected $fillable = [
         'employe_id',
-        'equipe_id',      
+        'date',
         'heure_arrivee',
         'heure_depart',
-        'date',
+        'equipe_id',
+        'modalite',
+        'total_retard',
     ];
+
 
     public function employe()
     {

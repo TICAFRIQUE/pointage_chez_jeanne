@@ -11,6 +11,7 @@ class Employe extends Model
         'nom',
         'prenoms',
         'equipe_id',
+       
     ];
 
     public function equipe()
@@ -49,7 +50,7 @@ class Employe extends Model
 
         static::creating(function ($model) {
             $model->id = IdGenerator::generate([
-                'table' => 'employes', 
+                'table' => 'employes',
                 'length' => 10,
                 'prefix' => mt_rand(),
             ]);

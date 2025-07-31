@@ -2,82 +2,98 @@
 <html lang="fr">
 
 <head>
-    <meta charset="UTF-8">
-    <title>Historique des pointages</title>
+    <meta charset="UTF-8" />
+    <title>Historique des pointages - Restaurant chezJeanne</title>
     <style>
         body {
-            font-family: sans-serif;
+            font-family: Arial, sans-serif;
             font-size: 12px;
+            color: #222;
+            margin: 20px;
         }
 
-        .header {
+        h2 {
             text-align: center;
-            margin-bottom: 1rem;
-        }
-
-        .restaurant-name {
-            font-size: 16px;
-            font-weight: bold;
             text-transform: uppercase;
-        }
-
-        h3 {
-            margin: 0.5rem 0 1rem;
-            font-size: 15px;
-            text-decoration: underline;
+            font-weight: bold;
+            margin-bottom: 20px;
+            color: #0dcaf0;
         }
 
         table {
             width: 100%;
             border-collapse: collapse;
-            font-size: 12px;
+            font-size: 11px;
+            margin-top: 10px;
         }
 
         th,
         td {
-            border: 1px solid #333;
-            padding: 5px;
+            border: 1px solid #444;
+            padding: 6px;
             text-align: center;
         }
 
         th {
-            background-color: #eee;
+            background-color: #0dcaf0;
+            color: white;
+            font-weight: bold;
         }
 
         .badge {
             display: inline-block;
-            padding: 0.2em 0.4em;
-            font-size: 11px;
-            font-weight: 600;
-            color: white;
+            padding: 3px 6px;
+            font-size: 10px;
+            font-weight: bold;
             border-radius: 4px;
+            color: #fff;
         }
 
         .bg-success {
             background-color: #28a745;
         }
 
+        .bg-warning {
+            background-color: #ffc107;
+            color: #212529;
+        }
+
         .bg-danger {
             background-color: #dc3545;
+        }
+
+        .bg-secondary {
+            background-color: #6c757d;
+        }
+
+        .bg-primary {
+            background-color: #0d6efd;
+        }
+
+        .footer {
+            margin-top: 20px;
+            font-weight: bold;
+            font-size: 12px;
+            text-align: right;
         }
     </style>
 </head>
 
 <body>
-    <div class="header">
-        <div class="restaurant-name">Restaurant : chezJeanne</div>
-        <h3>Historique des pointages</h3>
-    </div>
+
+    <h2>Historique des pointages — Restaurant chezJeanne</h2>
 
     <table>
         <thead>
             <tr>
                 <th>Date</th>
-                <th>Nom & Prénoms</th>
-                <th>Heure d’arrivée</th>
-                <th>Heure de départ</th>
+                <th>Employé</th>
+                <th>Arrivée</th>
+                <th>Départ</th>
                 <th>Équipe</th>
                 <th>Statut</th>
+                <th>Retard (min)</th>
+                <th>Modalité</th>
             </tr>
         </thead>
         <tbody>
@@ -93,20 +109,47 @@
                 <tr>
                     <td>{{ \Carbon\Carbon::parse($pointage->date)->format('d/m/Y') }}</td>
                     <td>{{ $pointage->employe->nom }} {{ $pointage->employe->prenoms }}</td>
-                    <td>{{ $pointage->heure_arrivee }}</td>
-                    <td>{{ $pointage->heure_depart }}</td>
+                    <td>{{ $heureArrivee ? \Carbon\Carbon::parse($heureArrivee)->format('H:i') : '-' }}</td>
+                    <td>{{ $pointage->heure_depart ? \Carbon\Carbon::parse($pointage->heure_depart)->format('H:i') : '-' }}
+                    </td>
                     <td>{{ optional($pointage->equipe)->nom ?? 'Non défini' }}</td>
+
                     <td>
-                        @if ($conforme)
-                            <span class="badge bg-success">Conforme</span>
+                        @if ($pointage->modalite === 'jour_travail')
+                            @if ($conforme)
+                                <span class="badge bg-success">Conforme</span>
+                            @elseif ($pointage->heure_arrivee)
+                                <span class="badge bg-warning">Retard</span>
+                            @else
+                                <span class="badge bg-danger"> Absent</span>
+                            @endif
                         @else
-                            <span class="badge bg-danger">Retard</span>
+                            <span class="badge bg-secondary">—</span>
+                        @endif
+                    </td>
+
+                    <td>{{ $pointage->total_retard * -1 }}</td>
+
+                    <td>
+                        @if ($pointage->modalite === 'jour_travail' && $pointage->heure_arrivee)
+                            <span class="badge bg-primary"> Présent</span>
+                        @elseif ($pointage->modalite === 'pas_jour_travail')
+                            <span class="badge bg-secondary"> Repos</span>
+                        @else
+                            <span class="badge bg-danger">Absent</span>
                         @endif
                     </td>
                 </tr>
             @endforeach
         </tbody>
     </table>
+
+    @if (isset($total_retard))
+        <div class="footer">
+            <strong>Cumul total du retard :</strong> {{ $total_retard * -1 }} minutes
+        </div>
+    @endif
+
 </body>
 
 </html>

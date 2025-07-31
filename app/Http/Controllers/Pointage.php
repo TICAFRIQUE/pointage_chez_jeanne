@@ -6,10 +6,11 @@ use App\Http\Requests\StorePresenceRequest;
 use App\Models\Employe;
 use App\Models\Equipe;
 use App\Models\Presence;
+use Barryvdh\DomPDF\Facade\Pdf;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
-use Carbon\Carbon;
-use Barryvdh\DomPDF\Facade\Pdf;
+
 
 class Pointage extends Controller
 {
@@ -28,79 +29,66 @@ class Pointage extends Controller
 
         return view('backend.pages.pointage.presencesEmploye', compact('pointageDuJour', 'equipes'));
     }
-    // public function equipeActive($date = null)
-    // {
-    //     $date = $date ?? now()->toDateString();
-
-    //     return $this->equipes()
-    //         ->wherePivot('date_affectation', '<=', $date)
-    //         ->where(function ($q) use ($date) {
-    //             $q->whereNull('date_fin')->orWhere('date_fin', '>=', $date);
-    //         })->first();
-    // }
-
-
-
-
-
 
     public function store(Request $request)
     {
-        // Valider les champs attendus, y compris le tableau 'equipe'
-
         $validated = $request->validate([
             'date' => 'required|date',
             'heure_arrivee' => 'required|array',
             'heure_depart' => 'required|array',
             'equipe' => 'required|array',
+            'modalite' => 'required|array',
         ]);
-
 
         $date = $validated['date'];
 
-        foreach ($validated['heure_arrivee'] as $employe_id => $arrivee) {
+        foreach ($validated['modalite'] as $employe_id => $modalite) {
+            $arrivee = $validated['heure_arrivee'][$employe_id] ?? null;
             $depart = $validated['heure_depart'][$employe_id] ?? null;
             $equipe_id = $validated['equipe'][$employe_id] ?? null;
 
-            if ($arrivee && $depart && $equipe_id) {
-                Presence::create([
-                    'employe_id' => $employe_id,
-                    'date' => $date,
-                    'heure_arrivee' => $arrivee,
-                    'heure_depart' => $depart,
-                    'equipe_id' => $equipe_id,
-                ]);
+            // On ignore les pointages marqués "pas jour de travail"
+            if ($modalite === 'pas_jour_travail') {
+                continue;
             }
+
+            $total_retard = 0;
+
+            // Calcul du retard si jour travaillé
+            if ($modalite === 'jour_travail' && $arrivee && $equipe_id) {
+                $equipe = \App\Models\Equipe::find($equipe_id);
+
+                if ($equipe && $equipe->heure_debut) {
+                    $heureArrivee = \Carbon\Carbon::parse($arrivee);
+                    $heureDebutEquipe = \Carbon\Carbon::parse($equipe->heure_debut);
+
+                    if ($heureArrivee->gt($heureDebutEquipe)) {
+                        $total_retard = $heureArrivee->diffInMinutes($heureDebutEquipe);
+                    }
+                }
+            }
+
+            // Enregistrement de la présence
+            Presence::create([
+                'employe_id'    => $employe_id,
+                'date'          => $date,
+                'heure_arrivee' => $modalite === 'jour_travail' ? $arrivee : null,
+                'heure_depart'  => $modalite === 'jour_travail' ? $depart : null,
+                'equipe_id'     => $equipe_id,
+                'modalite'      => $modalite,
+                'total_retard'  =>  $total_retard,
+            ]);
         }
-
-
 
         return redirect()->route('pointages.listEquipe')
             ->with('success_message', 'Pointage enregistré avec succès.');
     }
 
-
-
-
-
-
-
-    // public function historique()
-    // {
-    //     $pointages = Presence::with('employe')->orderByDesc('date')->paginate(30);
-
-    //     return view('backend.pages.pointage.historique', compact('pointages'));
-    // }
-
-
-
-
-
     public function historique(Request $request)
     {
         $query = Presence::with(['employe', 'equipe']);
 
-        // ✅ Filtrage flexible par date
+        // Filtrage flexible par date
         if ($request->filled('date_debut') && $request->filled('date_fin')) {
             $dateDebut = Carbon::parse($request->input('date_debut'))->startOfDay();
             $dateFin = Carbon::parse($request->input('date_fin'))->endOfDay();
@@ -116,7 +104,7 @@ class Pointage extends Controller
             $query->whereBetween('date', [now()->subDays(7)->startOfDay(), now()->endOfDay()]);
         }
 
-        // ✅ Filtre par équipe
+        // Filtre par équipe
         if ($request->filled('equipe_id')) {
             $query->where('equipe_id', $request->input('equipe_id'));
         }
@@ -124,8 +112,16 @@ class Pointage extends Controller
         $pointages = $query->orderByDesc('date')->paginate(30);
         $equipes = Equipe::orderBy('nom')->get();
 
+
+
+
         return view('backend.pages.pointage.historique', compact('pointages', 'equipes'));
     }
+
+
+
+
+
 
     public function historiqueParEmploye(Employe $employe)
     {
@@ -133,32 +129,46 @@ class Pointage extends Controller
             ->with('equipe')
             ->orderByDesc('date')
             ->paginate(25);
+        $total_retard = $employe->presences()->sum('total_retard') * (-1);
 
-        return view('backend.pages.pointage.historique_employe', compact('employe', 'pointages'));
+        return view('backend.pages.pointage.historique_employe', compact('employe', 'pointages', 'total_retard'));
     }
 
 
 
 
-    public function exportPdf(Request $request)
-    {
-        $query = Presence::with(['employe', 'equipe']);
 
-        if ($request->filled('date_debut') && $request->filled('date_fin')) {
-            $dateDebut = Carbon::parse($request->input('date_debut'))->startOfDay();
-            $dateFin = Carbon::parse($request->input('date_fin'))->endOfDay();
-            $query->whereBetween('date', [$dateDebut, $dateFin]);
-        }
 
-        if ($request->filled('equipe_id')) {
-            $query->where('equipe_id', $request->input('equipe_id'));
-        }
 
-        $pointages = $query->orderByDesc('date')->get();
 
-        $pdf = Pdf::loadView('backend.pages.pointage.pdf', compact('pointages'))
-            ->setPaper('A4', 'landscape');
+  public function exportPdf(Request $request)
+{
+    $query = Presence::with(['employe', 'equipe']);
 
-        return $pdf->download('historique_pointages.pdf');
+    // ✅ Appliquer les mêmes filtres que la vue HTML
+    if ($request->filled('date_debut')) {
+        $query->whereDate('date', '=', $request->input('date_debut'));
     }
+
+    if ($request->filled('date_fin')) {
+        $query->whereDate('date', '=', $request->input('date_fin'));
+    }
+
+    if ($request->filled('equipe_id')) {
+        $query->where('equipe_id', $request->input('equipe_id'));
+    }
+
+    $pointages = $query->orderByDesc('date')->get();
+    $total_retard = $pointages->sum('total_retard');
+
+    $pdf = PDF::loadView('backend.pages.pointage.pdf', [
+        'pointages' => $pointages,
+        'total_retard' => $total_retard,
+        'restaurant' => 'chezJeanne',
+        'filters' => $request->only(['date_debut', 'date_fin', 'equipe_id']),
+    ])->setPaper('A4', 'landscape');
+
+    return $pdf->download('historique_pointages_' . date('Ymd') . '.pdf');
+}
+
 }

@@ -18,6 +18,9 @@ return new class extends Migration
             $table->date('date');
             $table->time('heure_arrivee')->nullable();
             $table->time('heure_depart')->nullable();
+            $table->string('modalite');
+            $table->integer('total_retard')->default(0);
+
             $table->timestamps();
         });
     }

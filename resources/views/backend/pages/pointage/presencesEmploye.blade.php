@@ -3,25 +3,21 @@
 @section('title', 'Pointage Équipe')
 
 @section('css')
-    <!-- DataTables CSS -->
     <link href="https://cdn.datatables.net/1.11.5/css/dataTables.bootstrap5.min.css" rel="stylesheet" />
     <link href="https://cdn.datatables.net/responsive/2.2.9/css/responsive.bootstrap.min.css" rel="stylesheet" />
     <link href="https://cdn.datatables.net/buttons/2.2.2/css/buttons.dataTables.min.css" rel="stylesheet" />
 
     <style>
-        /* Limiter largeur et centrer */
         .pointage-container {
             max-width: 900px;
             margin: 2rem auto;
         }
 
-        /* Meilleure lisibilité des inputs */
         input[type="time"],
         select.form-select {
             min-width: 120px;
         }
 
-        /* Bouton bien visible et aligné */
         .btn-valider {
             max-width: 280px;
             margin: 2rem auto 0 auto;
@@ -57,7 +53,6 @@
         @endif
 
         <div class="card-body px-4 py-4">
-
             <form action="{{ route('pointages.store') }}" method="POST">
                 @csrf
 
@@ -71,22 +66,20 @@
                     @enderror
                 </div>
 
-
-                <!-- Info -->
                 <p class="text-muted fst-italic small mb-4">
                     Veuillez enregistrer les heures d’arrivée et de départ pour chaque employé.
                 </p>
 
-                <!-- Tableau -->
                 <div class="table-responsive" style="max-height: 500px; overflow-y: auto;">
                     <table id="buttons-datatables" class="table table-bordered table-hover text-center align-middle mb-0">
                         <thead class="table-light sticky-top">
                             <tr>
-                                <th style="width: 40px;">#</th>
+                                <th>#</th>
                                 <th>Nom & Prénoms</th>
-                                <th style="width: 180px;">Équipe</th>
-                                <th style="width: 130px;">Heure d’arrivée</th>
-                                <th style="width: 130px;">Heure de départ</th>
+                                <th>Équipe</th>
+                                <th>Heure d’arrivée</th>
+                                <th>Heure de départ</th>
+                                <th>Modalité</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -100,21 +93,35 @@
                                             <option value="" {{ $item->equipe_id ? '' : 'selected' }}>-- Sélectionner
                                                 une équipe --</option>
                                             @foreach ($equipes as $equipe)
-                                                <option value="{{ $equipe->id }}">
+                                                <option value="{{ $equipe->id }}"
+                                                    {{ $item->equipe_id == $equipe->id ? 'selected' : '' }}>
                                                     {{ $equipe->nom }}
                                                 </option>
                                             @endforeach
                                         </select>
                                     </td>
 
-                                    <td><input type="time" name="heure_arrivee[{{ $item->id }}]"
-                                            class="form-control form-control-sm shadow-sm"></td>
-                                    <td><input type="time" name="heure_depart[{{ $item->id }}]"
-                                            class="form-control form-control-sm shadow-sm"></td>
+                                    <td>
+                                        <input type="time" name="heure_arrivee[{{ $item->id }}]"
+                                            class="form-control form-control-sm shadow-sm">
+                                    </td>
+                                    <td>
+                                        <input type="time" name="heure_depart[{{ $item->id }}]"
+                                            class="form-control form-control-sm shadow-sm">
+                                    </td>
+                                    <td>
+                                        <select name="modalite[{{ $item->id }}]"
+                                            class="form-select form-select-sm shadow-sm modalite-select"
+                                            data-id="{{ $item->id }}">
+                                            <option value="jour_travail">Present</option>
+                                            <option value="pas_jour_travail">Jour de répos</option>
+                                            <option value="absent">Absent</option>
+                                        </select>
+                                    </td>
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="5" class="text-muted fst-italic">Aucun employé Enregistré.</td>
+                                    <td colspan="6" class="text-muted fst-italic">Aucun employé Enregistré.</td>
                                 </tr>
                             @endforelse
                         </tbody>
@@ -146,6 +153,7 @@
 
     <script>
         $(document).ready(function() {
+            // Activer DataTables
             $('#buttons-datatables').DataTable({
                 dom: 'Bfrtip',
                 buttons: ['copy', 'csv', 'excel', 'pdf', 'print'],
@@ -153,6 +161,30 @@
                 searching: false,
                 info: false,
                 responsive: true
+            });
+
+            // Gérer l’activation/désactivation des horaires selon la modalité
+            $('.modalite-select').each(function() {
+                const select = $(this);
+                const id = select.data('id');
+                const arrivee = $(`input[name="heure_arrivee[${id}]"]`);
+                const depart = $(`input[name="heure_depart[${id}]"]`);
+
+                function toggleInputs() {
+                    const value = select.val();
+                    const disabled = (value !== 'jour_travail');
+
+                    arrivee.prop('disabled', disabled);
+                    depart.prop('disabled', disabled);
+
+                    if (disabled) {
+                        arrivee.val('');
+                        depart.val('');
+                    }
+                }
+
+                select.on('change', toggleInputs);
+                toggleInputs(); // Au chargement
             });
         });
     </script>
