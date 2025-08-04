@@ -81,7 +81,7 @@ Route::middleware(['admin'])->prefix('admin')->group(function () {
 
     // Employé
     Route::prefix('employe')->name('employes.')->controller(EmployeController::class)->group(function () {
-        Route::get('', 'index')->name('index');
+        Route::get('', 'index')->name('index')->middleware('can:voir-employes');
         Route::get('create', 'create')->name('create');
         Route::post('store', 'store')->name('store');
         Route::get('show/{id}', 'show')->name('show');
@@ -89,6 +89,7 @@ Route::middleware(['admin'])->prefix('admin')->group(function () {
         Route::post('update/{id}', 'update')->name('update');
         Route::delete('delete/{id}', 'delete')->name('delete');
     });
+    
 
     // Equipe
     Route::prefix('equipe')->name('equipes.')->controller(EquipeController::class)->group(function () {

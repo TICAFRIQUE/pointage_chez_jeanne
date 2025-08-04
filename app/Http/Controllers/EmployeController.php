@@ -2,93 +2,77 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
 use App\Http\Requests\CreateEmployeRequest;
 use App\Models\Employe;
 use App\Models\Equipe;
-use Exception;
 use Illuminate\Http\Request;
-
+use Illuminate\Support\Facades\Log;
+use Exception;
 
 class EmployeController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Affiche la liste paginée des employés.
      */
     public function index()
     {
-
         try {
             $employes = Employe::paginate(10);
-
             return view('backend.pages.employers.index', compact('employes'));
         } catch (Exception $e) {
-            return redirect()
-                ->back()
-                ->withInput()
-                ->with('error_message', "Erreur survenu lors du chargement de la page employé : " . $e->getMessage());
+            Log::error("Erreur index employés : " . $e->getMessage());
+            return redirect()->back()->with('error_message', "Erreur lors du chargement des employés.");
         }
     }
 
+    /**
+     * Affiche le formulaire de création.
+     */
     public function create()
     {
-
-        return view('backend.pages.employers.create', ['equipes' => Equipe::all()]);
+        try {
+            $equipes = Equipe::all();
+            return view('backend.pages.employers.create', compact('equipes'));
+        } catch (Exception $e) {
+            Log::error("Erreur create employé : " . $e->getMessage());
+            return back()->with('error_message', "Impossible d'afficher le formulaire de création.");
+        }
     }
 
     /**
-     * Show the form for creating a new resource.
-     */
-
-
-    /**
-     * Store a newly created resource in storage.
+     * Enregistre un nouvel employé.
      */
     public function store(CreateEmployeRequest $request)
     {
-
-        $data = $request->all();
-
         try {
-            Employe::create($data);
-
-            return redirect()->route('employes.index')->with('success', "L'employé a été créé avec succès");
+            Employe::create($request->validated());
+            return redirect()->route('employes.index')->with('success', "L'employé a été créé avec succès.");
         } catch (Exception $e) {
-
-            return "Erreur survenue lors de l'enregistrément de l'employé!" . $e->getMessage();
+            Log::error("Erreur store employé : " . $e->getMessage());
+            return back()->withInput()->with('error_message', "Erreur lors de l'enregistrement de l'employé.");
         }
     }
 
     /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-
-
-    /**
-     * Update the specified resource in storage.
+     * Met à jour un employé (à implémenter si nécessaire).
      */
     public function update(Request $request, string $id)
     {
-        //
+        // À implémenter si besoin.
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Supprime un employé.
      */
     public function delete($id)
     {
-        
-        $employe = Employe::findOrFail($id);
-        $employe->delete();
-
-        return redirect()->route('employes.index')->with('success_message', 'Employé supprimé avec succès.');
+        try {
+            $employe = Employe::findOrFail($id);
+            $employe->delete();
+            return redirect()->route('employes.index')->with('success_message', 'Employé supprimé avec succès.');
+        } catch (Exception $e) {
+            Log::error("Erreur delete employé : " . $e->getMessage());
+            return redirect()->route('employes.index')->with('error_message', "Erreur lors de la suppression de l'employé.");
+        }
     }
 }

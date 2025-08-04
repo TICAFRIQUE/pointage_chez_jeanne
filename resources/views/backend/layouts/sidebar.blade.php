@@ -20,7 +20,8 @@
                             <span>Tableau de bord</span>
                         </a>
                     </li>
-
+                @endcan
+                @can('voir-pointage')
                     <li class="nav-item">
                         <a href="{{ route('pointages.listEquipe') }}"
                             class="nav-link menu-link {{ Route::is('pointage.*') ? 'active' : '' }}"
@@ -30,7 +31,8 @@
                         </a>
 
                     </li>
-
+                @endcan
+                @can('voir-employes')
                     <li class="nav-item">
                         <a href="{{ route('employes.index') }}"
                             class="nav-link menu-link {{ Route::is('employes.*') ? 'active' : '' }}"
@@ -39,7 +41,8 @@
                             <span>Employés</span>
                         </a>
                     </li>
-
+                @endcan
+                @can('voir-equipe')
                     <li class="nav-item">
                         <a href="{{ route('equipes.index') }}"
                             class="nav-link menu-link {{ Route::is('equipes.*') ? 'active' : '' }}"
@@ -48,7 +51,8 @@
                             <span>Équipes</span>
                         </a>
                     </li>
-
+                @endcan
+                @can('voir-historique')
                     <li class="nav-item">
                         <a href="{{ route('pointages.historique') }}"
                             class="nav-link menu-link {{ Route::is('historique.*') ? 'active' : '' }}"
@@ -58,6 +62,7 @@
                         </a>
                     </li>
                 @endcan
+
 
                 <!-- Paramètres -->
                 @if (Auth::user()->role == 'superadmin' || Auth::user()->role == 'developpeur' || Auth::user()->can('voir-parametre'))

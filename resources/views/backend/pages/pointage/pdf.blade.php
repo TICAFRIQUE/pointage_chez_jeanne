@@ -117,7 +117,7 @@
                     <td>
                         @if ($pointage->modalite === 'jour_travail')
                             @if ($conforme)
-                                <span class="badge bg-success">Conforme</span>
+                                <span class="badge bg-success">Ponctuel</span>
                             @elseif ($pointage->heure_arrivee)
                                 <span class="badge bg-warning">Retard</span>
                             @else

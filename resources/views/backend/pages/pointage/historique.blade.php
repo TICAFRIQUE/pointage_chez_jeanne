@@ -85,7 +85,7 @@
                             <td>
                                 @if ($pointage->modalite === 'jour_travail')
                                     @if ($conforme)
-                                        <span class="badge bg-success rounded-pill">✅ Conforme</span>
+                                        <span class="badge bg-success rounded-pill">✅ Ponctuel</span>
                                     @elseif ($heureArrivee)
                                         <span class="badge bg-warning text-dark rounded-pill">⏱ Retard</span>
                                     @else
