@@ -21,15 +21,14 @@
                         </a>
                     </li>
                 @endcan
-                @can('voir-pointage')
+                @can('voir-equipe')
                     <li class="nav-item">
-                        <a href="{{ route('pointages.listEquipe') }}"
-                            class="nav-link menu-link {{ Route::is('pointage.*') ? 'active' : '' }}"
-                            title="Pointage des équipes">
-                            <i class="ri-clock-line"></i>
-                            <span>Pointage</span>
+                        <a href="{{ route('equipes.index') }}"
+                            class="nav-link menu-link {{ Route::is('equipes.*') ? 'active' : '' }}"
+                            title="Gestion des équipes">
+                            <i class="ri-cursor-line"></i>
+                            <span>Équipes</span>
                         </a>
-
                     </li>
                 @endcan
                 @can('voir-employes')
@@ -42,14 +41,15 @@
                         </a>
                     </li>
                 @endcan
-                @can('voir-equipe')
+                @can('voir-pointage')
                     <li class="nav-item">
-                        <a href="{{ route('equipes.index') }}"
-                            class="nav-link menu-link {{ Route::is('equipes.*') ? 'active' : '' }}"
-                            title="Gestion des équipes">
-                            <i class="ri-group-line"></i>
-                            <span>Équipes</span>
+                        <a href="{{ route('pointages.listEquipe') }}"
+                            class="nav-link menu-link {{ Route::is('pointage.*') ? 'active' : '' }}"
+                            title="Pointage des équipes">
+                            <i class="ri-clock-line"></i>
+                            <span>Pointage</span>
                         </a>
+
                     </li>
                 @endcan
                 @can('voir-historique')
