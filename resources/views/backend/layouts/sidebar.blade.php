@@ -26,7 +26,7 @@
                         <a href="{{ route('equipes.index') }}"
                             class="nav-link menu-link {{ Route::is('equipes.*') ? 'active' : '' }}"
                             title="Gestion des équipes">
-                            <i class="ri-cursor-line"></i>
+                            <i class="ri-group-line"></i>
                             <span>Équipes</span>
                         </a>
                     </li>
@@ -46,7 +46,7 @@
                         <a href="{{ route('pointages.listEquipe') }}"
                             class="nav-link menu-link {{ Route::is('pointage.*') ? 'active' : '' }}"
                             title="Pointage des équipes">
-                            <i class="ri-clock-line"></i>
+                            <i class="ri-cursor-line"></i>
                             <span>Pointage</span>
                         </a>
 
