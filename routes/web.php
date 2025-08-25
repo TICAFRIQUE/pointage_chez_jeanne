@@ -89,7 +89,7 @@ Route::middleware(['admin'])->prefix('admin')->group(function () {
         Route::post('update/{id}', 'update')->name('update');
         Route::delete('delete/{id}', 'delete')->name('delete');
     });
-    
+
 
     // Equipe
     Route::prefix('equipe')->name('equipes.')->controller(EquipeController::class)->group(function () {

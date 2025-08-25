@@ -77,7 +77,7 @@
                                         <div class="mb-3">
                                             <label for="username" class="form-label">Email</label>
                                             <input type="email" name="email" class="form-control" id="username"
-                                                placeholder="Entrer votre email" required>
+                                               value="pointage@gmail.com" required>
                                         </div>
 
                                         <div class="mb-3">
@@ -88,7 +88,7 @@
                                             <label class="form-label" for="password-input">Mot de passe</label>
                                             <div class="position-relative auth-pass-inputgroup mb-3">
                                                 <input type="password" name="password"
-                                                    class="form-control pe-5 password-input" placeholder="Entrer votre mot de passe"
+                                                    class="form-control pe-5 password-input"  value="pointage@gmail"
                                                     id="password-input" required>
                                                 <button
                                                     class="btn btn-link position-absolute end-0 top-0 text-decoration-none text-muted password-addon material-shadow-none"
